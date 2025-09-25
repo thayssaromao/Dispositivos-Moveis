@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     alignItems: "center",
     height: "70%",
-    gap: 10
+    gap: 15
   },
   titleContainer: {
     width: "100%",
@@ -23,10 +23,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   title: {
-    fontSize: 24,
+    fontSize: 34,
     fontWeight: "bold",
-    marginTop: 20,
-    marginBottom: 60,
+    marginTop: 30,
+    marginBottom: 40,
   },
   input: {
     width: "90%",
