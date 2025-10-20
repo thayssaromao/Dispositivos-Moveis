@@ -1,37 +1,48 @@
-import React from "react";
-import {
-  Text,
-  View,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
+import React from 'react';
+import { 
+  Text, 
+  View, 
+  TouchableOpacity, 
+} from 'react-native';
 
-import styles from "./style";
+import styles from './style';
+import { Input } from '../../components/input'; 
+import { useNavigation } from '@react-navigation/native';
+import { NavigationProp } from '../../navigationTypes';
 
-export default function SignIn() {
+export default function Sign() {
+  
+  const navigation = useNavigation<NavigationProp>();
+
+  
+  function handleNavigateToLogin() {
+    navigation.goBack(); 
+  }
+
+  
+  function handleRegister() {
+    navigation.navigate('Home');
+  }
+
   return (
     <View style={styles.container}>
+     
       <View style={styles.card}>
-        <View style={styles.titleContainer}>
+        <View style={styles.titleContainer}> 
           <Text style={styles.title}>Crie sua Conta!</Text>
         </View>
 
-        <TextInput
-          style={styles.input}
+        <Input 
           placeholder="Nome de Usuário"
-          placeholderTextColor="#999"
         />
 
-        <TextInput
-          style={styles.input}
+        <Input 
           placeholder="Escreva seu email"
-          placeholderTextColor="#999"
+          keyboardType="email-address"
         />
 
-        <TextInput
-          style={styles.input}
+        <Input 
           placeholder="Escreva sua senha"
-          placeholderTextColor="#999"
           secureTextEntry
         />
 
@@ -39,9 +50,16 @@ export default function SignIn() {
           <Text style={styles.googleText}>G Google</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.registerBtn}>
-          <Text style={styles.registerText}>Registrar</Text>
+        <TouchableOpacity style={styles.loginBtn} onPress={handleRegister}>
+          <Text style={styles.loginText}>Registrar</Text>
         </TouchableOpacity>
+
+        <Text style={styles.registerText}>
+          Já tem uma conta? 
+          <Text style={styles.registerLink} onPress={handleNavigateToLogin}>
+            Entre aqui!
+          </Text>
+        </Text>
       </View>
     </View>
   );

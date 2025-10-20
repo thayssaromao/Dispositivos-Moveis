@@ -2,14 +2,28 @@ import React from "react";
 import { 
   Text, 
   View, 
-  TextInput, 
   TouchableOpacity, 
-  StyleSheet 
+  StyleSheet,
+
 } from "react-native";
 import styles from "./style";
-
+import { Input } from '../../components/input'; 
+import { useNavigation } from '@react-navigation/native';
+import { NavigationProp } from '../../navigationTypes';
 
 export default function Login() {
+
+  const navigation = useNavigation<NavigationProp>();
+
+  function handleNavigateToSignUp() {
+    navigation.navigate('Sign'); 
+  }
+
+  function handleLogin() {
+    //temporario
+    navigation.navigate('Home');
+  }
+
   return (
     <View style={styles.container}>
     
@@ -18,29 +32,26 @@ export default function Login() {
           <Text style={styles.title}>Bem Vindo ao{"\n"}Trip to Go!</Text>
         </View>
 
-        <TextInput 
-          style={styles.input}
-          placeholder="Escreva seu email"
-          placeholderTextColor="#999"
+        <Input 
+          placeholder='Escreva seu email'
+          keyboardType="email-address"
         />
 
-        <TextInput 
-          style={styles.input}
+        <Input 
           placeholder="Escreva sua senha"
-          placeholderTextColor="#999"
-          secureTextEntry
+          secureTextEntry 
         />
 
         <TouchableOpacity style={styles.googleBtn}>
           <Text style={styles.googleText}>G Google</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.loginBtn}>
+        <TouchableOpacity style={styles.loginBtn} onPress={handleLogin}>
           <Text style={styles.loginText}>Login</Text>
         </TouchableOpacity>
 
         <Text style={styles.registerText}>
-          Não tem uma conta? <Text style={styles.registerLink}>Crie aqui!</Text>
+          Não tem uma conta? <Text style={styles.registerLink} onPress={handleNavigateToSignUp}>Crie aqui!</Text>
         </Text>
       </View>
     </View>
