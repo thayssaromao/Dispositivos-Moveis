@@ -9,9 +9,17 @@ import {
   SafeAreaView 
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import MapView, { Marker } from 'react-native-maps';
 import styles from './style'; 
 
 export default function Home() {
+  const initialRegion = {
+    latitude: -23.5505,
+    longitude: -46.6333,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  };
+
   return (
     
     <SafeAreaView style={styles.container}> 
@@ -79,9 +87,16 @@ export default function Home() {
         {/* Seção Procure no Mapa */}
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Procure No Mapa</Text>
-          <View style={styles.mapPlaceholder}>
-            <Text>Aqui vai o componente de Mapa</Text>
-          </View>
+          <MapView 
+            style={styles.map}
+            initialRegion={initialRegion}
+          >
+            <Marker
+              coordinate={{ latitude: -23.561334, longitude: -46.656539 }}
+              title="Avenida Paulista"
+              description="Coração de São Paulo"
+            />
+          </MapView>
         </View>
       </ScrollView>
     </SafeAreaView>
