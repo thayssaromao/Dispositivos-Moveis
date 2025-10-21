@@ -47,7 +47,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 15,
+    marginBottom: 20,
+  },
+  sectionTitleCard: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
   //cards de Local
   placeCard: {
@@ -55,7 +60,7 @@ const styles = StyleSheet.create({
     height: 220, 
     marginRight: 15, 
     borderRadius: 16,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#dddadaff',
     overflow: 'hidden', 
   },
   cardImage: {
@@ -83,6 +88,22 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     overflow: 'hidden',
     marginBottom: 20,
+  },
+
+  categoryCard: {
+    paddingHorizontal: 15,
+    paddingVertical: 12,
+    marginRight: 15,
+    borderRadius: 16,
+    backgroundColor: '#555454ff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  categoryTitle: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: '#fff',
   },
 });
 
