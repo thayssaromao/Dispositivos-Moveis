@@ -42,7 +42,7 @@ export default function Home() {
 
         {/* Seção Melhores Avaliados */}
         <View style={styles.sectionContainer}>
-          <Text style={styles.sectionTitle}>Melhores Avaliados</Text>
+          <Text style={styles.sectionTitleCard}>Melhores Avaliados</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             
             <View style={styles.placeCard}>
@@ -87,6 +87,21 @@ export default function Home() {
         {/* Seção Procure no Mapa */}
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Procure No Mapa</Text>
+          {/* Seção categorias */}
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <View style={styles.categoryCard}>
+              <Text style={styles.categoryTitle}>Restaurantes</Text>
+            </View>
+            <View style={styles.categoryCard}>
+              <Text style={styles.categoryTitle}>Bares</Text>
+            </View>
+            <View style={styles.categoryCard}>
+              <Text style={styles.categoryTitle}>Atrações</Text>
+            </View>
+            <View style={styles.categoryCard}>
+              <Text style={styles.categoryTitle}>Categoria</Text>
+            </View>
+          </ScrollView>
           <MapView 
             style={styles.map}
             initialRegion={initialRegion}
