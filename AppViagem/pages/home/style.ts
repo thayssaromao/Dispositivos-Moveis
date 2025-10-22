@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
   //cards de Local
   placeCard: {
     width: 200,
-    height: 220, 
+    height: 200, 
     marginRight: 15, 
     borderRadius: 16,
     backgroundColor: '#dddadaff',
@@ -91,8 +91,8 @@ const styles = StyleSheet.create({
   },
 
   categoryCard: {
-    paddingHorizontal: 15,
-    paddingVertical: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
     marginRight: 15,
     borderRadius: 16,
     backgroundColor: '#555454ff',

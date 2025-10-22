@@ -17,9 +17,18 @@ import * as Location from 'expo-location';
 
 import styles from './style'; 
 
+type Local = {
+  nome: string;
+  latitude: number;
+  longitude: number;
+};
+
 export default function Home() {
   const [region, setRegion] = useState<Region | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const [categoriaSelecionada, setCategoriaSelecionada] = useState<string | null>(null);
+const [locais, setLocais] = useState<{ nome: string; latitude: number; longitude: number }[]>([]);
 
   /* MARK: Pedir permissao de localizacao para usuario */
   useEffect(() => {
@@ -49,6 +58,28 @@ export default function Home() {
       setLoading(false);
     })();
   }, []);
+
+  const renderLocals = (categoria: string) => {
+    if(!region) return;
+
+const placeholdersLocais: Record<string, { nome: string; latitude: number; longitude: number }[]> = {
+      'Restaurantes': [
+        {nome: 'Restaurante A', latitude: region.latitude + 0.001, longitude: region.longitude + 0.001},
+        {nome: 'Restaurante B', latitude: region.latitude - 0.001, longitude: region.longitude - 0.001},
+      ],
+      'Bares': [
+        {nome: 'Bar A', latitude: region.latitude + 0.002, longitude: region.longitude + 0.002},
+        {nome: 'Bar B', latitude: region.latitude - 0.002, longitude: region.longitude - 0.002},
+      ],
+      'Atrações': [
+        {nome: 'Atração A', latitude: region.latitude + 0.003, longitude: region.longitude + 0.003},
+        {nome: 'Atração B', latitude: region.latitude - 0.003, longitude: region.longitude - 0.003},
+      ],  
+    };
+
+    setLocais(placeholdersLocais[categoria] || []);
+    setCategoriaSelecionada(categoria);
+  };
   
 if (loading) {
     return (
@@ -126,20 +157,24 @@ if (loading) {
         {/* Seção Procure no Mapa */}
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Procure No Mapa</Text>
+          
           {/* Seção categorias */}
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            <View style={styles.categoryCard}>
-              <Text style={styles.categoryTitle}>Restaurantes</Text>
-            </View>
-            <View style={styles.categoryCard}>
-              <Text style={styles.categoryTitle}>Bares</Text>
-            </View>
-            <View style={styles.categoryCard}>
-              <Text style={styles.categoryTitle}>Atrações</Text>
-            </View>
-            <View style={styles.categoryCard}>
-              <Text style={styles.categoryTitle}>Categoria</Text>
-            </View>
+            {['Restaurantes', 'Bares', 'Atrações'].map((cat) => (
+    <View
+      key={cat}
+      style={[
+        styles.categoryCard,
+        categoriaSelecionada === cat && { backgroundColor: '#4A90E2' }
+      ]}
+      onTouchEnd={() => renderLocals(cat)} // clique simples
+    >
+      <Text style={[
+        styles.categoryTitle,
+        categoriaSelecionada === cat && { color: '#fff' }
+      ]}>{cat}</Text>
+    </View>
+  ))}
           </ScrollView>
           {region && (
             <MapView 
@@ -147,11 +182,15 @@ if (loading) {
               region={region} 
               showsUserLocation={true} 
             >
+              {locais.map((local, index) => (
               <Marker
+                key={index}
                 coordinate={region}
-                title="Você está aqui"
-                description="Sua localização atual"
+                title={local.nome}
+                description={categoriaSelecionada || ''}
+                pinColor="#FF6347"
               />
+            ))}
             </MapView>
           )}
         </View>
