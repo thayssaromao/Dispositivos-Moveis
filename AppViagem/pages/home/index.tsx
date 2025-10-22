@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { 
   View, 
   Text, 
@@ -6,19 +6,58 @@ import {
   StyleSheet, 
   ScrollView, 
   Image,
-  SafeAreaView 
+  SafeAreaView,
+  Alert,
+  ActivityIndicator
 } from 'react-native';
+
 import { Ionicons } from '@expo/vector-icons';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, Region } from 'react-native-maps';
+import * as Location from 'expo-location';
+
 import styles from './style'; 
 
 export default function Home() {
-  const initialRegion = {
-    latitude: -23.5505,
-    longitude: -46.6333,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  };
+  const [region, setRegion] = useState<Region | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  /* MARK: Pedir permissao de localizacao para usuario */
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permissão negada', 'Precisamos de sua permissão para acessar a localização.');
+        setRegion({
+          latitude: -23.5505,
+          longitude: -46.6333,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        });
+        setLoading(false);
+        return;
+      }
+      let location = await Location.getCurrentPositionAsync({});
+      const { latitude, longitude } = location.coords;
+
+      setRegion({
+        latitude,
+        longitude,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+      });
+
+      setLoading(false);
+    })();
+  }, []);
+  
+if (loading) {
+    return (
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+        <ActivityIndicator size="large" color="#000" />
+        <Text>Carregando mapa...</Text>
+      </View>
+    );
+  }
 
   return (
     
@@ -102,16 +141,19 @@ export default function Home() {
               <Text style={styles.categoryTitle}>Categoria</Text>
             </View>
           </ScrollView>
-          <MapView 
-            style={styles.map}
-            initialRegion={initialRegion}
-          >
-            <Marker
-              coordinate={{ latitude: -23.561334, longitude: -46.656539 }}
-              title="Avenida Paulista"
-              description="Coração de São Paulo"
-            />
-          </MapView>
+          {region && (
+            <MapView 
+              style={styles.map}
+              region={region} 
+              showsUserLocation={true} 
+            >
+              <Marker
+                coordinate={region}
+                title="Você está aqui"
+                description="Sua localização atual"
+              />
+            </MapView>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
