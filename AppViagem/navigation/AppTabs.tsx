@@ -1,7 +1,7 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import Home from '../pages/home';
+import Home from '../pages/home/Home';
 import NovoLugar from '../pages/new_place';
 import Perfil from '../pages/profile';
 
