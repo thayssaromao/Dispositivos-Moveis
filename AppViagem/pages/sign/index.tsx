@@ -1,4 +1,7 @@
 import React from 'react';
+import { useState } from 'react';
+import { auth } from '../../services/firebaseConfig';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { 
   Text, 
   View, 
@@ -14,19 +17,40 @@ export default function Sign() {
   
   const navigation = useNavigation<NavigationProp>();
 
-  
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
   function handleNavigateToLogin() {
     navigation.goBack(); 
   }
 
   
-  function handleRegister() {
+  // function handleRegister() {
+  //   navigation.navigate('Home');
+  // }
+
+  async function handleRegister() {
+  try {
+    await createUserWithEmailAndPassword(auth, email, password);
+    console.log("Usuário registrado com sucesso!");
     navigation.navigate('Home');
+  } catch (error: any) {
+    console.log("Erro ao registrar:", error);
+    if (error.code === 'auth/email-already-in-use') {
+      alert("Este email já está em uso!");
+    } else if (error.code === 'auth/invalid-email') {
+      alert("Email inválido!");
+    } else if (error.code === 'auth/weak-password') {
+      alert("Senha muito fraca! Use pelo menos 6 caracteres.");
+    } else {
+      alert("Erro ao registrar: " + error.message);
+    }
   }
+}
 
   return (
     <View style={styles.container}>
-     
       <View style={styles.card}>
         <View style={styles.titleContainer}> 
           <Text style={styles.title}>Crie sua Conta!</Text>
@@ -34,16 +58,22 @@ export default function Sign() {
 
         <Input 
           placeholder="Nome de Usuário"
+          value={name}
+          onChangeText={setName}
         />
 
         <Input 
           placeholder="Escreva seu email"
           keyboardType="email-address"
+          value={email}
+          onChangeText={setEmail}
         />
 
         <Input 
           placeholder="Escreva sua senha"
           secureTextEntry
+          value={password}
+          onChangeText={setPassword}
         />
 
         <TouchableOpacity style={styles.googleBtn}>
