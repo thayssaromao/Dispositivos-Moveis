@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, ScrollView } from 'react-native';
-import styles from './style';
+import styles from '../style';
 
 type Props = {
   categorias: string[];

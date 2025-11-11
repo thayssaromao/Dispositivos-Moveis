@@ -16,6 +16,7 @@ import { Region } from 'react-native-maps';
 import styles from './style';
 import CategoryList from './components/CategoryList';
 import CustomMap from './components/CustomMap';
+import ButtonMap from './components/ButtonMap';
 
 type Local = {
   nome: string;
@@ -23,7 +24,7 @@ type Local = {
   longitude: number;
 };
 
-export default function Home() {
+export default function HomeV2() {
   const [region, setRegion] = useState<Region | null>(null);
   const [loading, setLoading] = useState(true);
   const [categoriaSelecionada, setCategoriaSelecionada] = useState<string | null>(null);
@@ -73,7 +74,7 @@ export default function Home() {
         { nome: 'Bar A', latitude: region.latitude + 0.002, longitude: region.longitude + 0.002 },
         { nome: 'Bar B', latitude: region.latitude - 0.002, longitude: region.longitude - 0.002 },
       ],
-      Atrações: [
+      Baladas: [
         { nome: 'Atração A', latitude: region.latitude + 0.003, longitude: region.longitude + 0.003 },
         { nome: 'Atração B', latitude: region.latitude - 0.003, longitude: region.longitude - 0.003 },
       ],
@@ -94,7 +95,6 @@ export default function Home() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
         {/* Header */}
         <View style={styles.header}>
           <Text style={styles.headerText}>Olá, Fulano!</Text>
@@ -105,10 +105,43 @@ export default function Home() {
         <View style={styles.searchContainer}>
           <Ionicons name="search" size={20} color="#888" style={styles.searchIcon} />
           <TextInput placeholder="Pesquise Aqui" style={styles.searchInput} placeholderTextColor="#888" />
-          <Ionicons name="mic-outline" size={22} color="#888" style={styles.micIcon} />
+          {/* <Ionicons name="mic-outline" size={22} color="#888" style={styles.micIcon} /> */}
         </View>
 
-        {/* Melhores Avaliados */}
+      <View style={{ flex: 1 }}>
+        {/* Mapa */}
+        <CustomMap region={region} locais={locais} categoria={categoriaSelecionada} />
+
+        {/* Categorias sobre o mapa */}
+        <View style={styles.categoryOverlay}>
+          <CategoryList
+            categorias={['Restaurantes', 'Bares', 'Parques', 'Cafeterias', 'Baladas']}
+            categoriaSelecionada={categoriaSelecionada}
+            onSelecionar={handleCategoriaSelecionada}
+          />
+          <ButtonMap
+            onPress={async () => {
+              try {
+                const location = await Location.getCurrentPositionAsync({});
+                const { latitude, longitude } = location.coords;
+                setRegion({
+                  latitude,
+                  longitude,
+                  latitudeDelta: 0.01,
+                  longitudeDelta: 0.01,
+                });
+                
+              } catch (error) {
+                Alert.alert('Erro', 'Não foi possível obter a localização atual.');
+              }
+            }}
+          />
+
+        </View>
+      </View>
+
+
+        {/* Melhores Avaliados
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitleCard}>Melhores Avaliados</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -119,21 +152,7 @@ export default function Home() {
               </View>
             ))}
           </ScrollView>
-        </View>
-
-        {/* Procure no mapa */}
-        <View style={styles.sectionContainer}>
-          <Text style={styles.sectionTitle}>Procure No Mapa</Text>
-
-          <CategoryList
-            categorias={['Restaurantes', 'Bares', 'Atrações']}
-            categoriaSelecionada={categoriaSelecionada}
-            onSelecionar={handleCategoriaSelecionada}
-          />
-
-          <CustomMap region={region} locais={locais} categoria={categoriaSelecionada} />
-        </View>
-      </ScrollView>
+        </View> */}       
     </SafeAreaView>
   );
 }

@@ -26,9 +26,20 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginHorizontal: 20,
     marginTop: 20,
+    marginBottom: 20,
     paddingHorizontal: 10,
     height: 50,
   },
+  categoryOverlay: {
+  position: 'absolute',
+  top: 20,
+  left: 0,
+  right: 0,
+  alignItems: 'center',
+  zIndex: 10, 
+  elevation: 10, 
+},
+
   searchIcon: {
     marginRight: 10,
   },
@@ -83,8 +94,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   map: {
-    width: '95%',
-    height: 300,
+    width: '100%',
+    height: '100%',
     borderRadius: 12,
     overflow: 'hidden',
     marginBottom: 20,

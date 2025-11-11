@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Home from '../pages/home/Home';
 import NovoLugar from '../pages/new_place';
 import Perfil from '../pages/profile';
+import HomeV2 from '../pages/home/HomeV2';
 
 export type AppTabParamList = {
   Buscar: undefined;
@@ -27,7 +28,7 @@ export default function AppTabs() {
           backgroundColor: '#fff', 
           borderTopWidth: 0,
           elevation: 4,
-          height: 60,
+          height: 80,
           paddingBottom: 5,
         },
         tabBarLabelStyle: {
@@ -53,7 +54,7 @@ export default function AppTabs() {
       {/*telas/abas */}
       <Tab.Screen 
         name="Buscar" 
-        component={Home}  
+        component={HomeV2}  
       />
       <Tab.Screen 
         name="NovoLugar" 
