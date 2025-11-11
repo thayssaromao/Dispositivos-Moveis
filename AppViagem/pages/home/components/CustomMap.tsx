@@ -1,7 +1,7 @@
 import React from 'react';
 import MapView, { Marker, Region } from 'react-native-maps';
 import { View } from 'react-native';
-import styles from './style';
+import styles from '../style';
 
 type Local = {
   nome: string;
@@ -19,7 +19,7 @@ export default function CustomMap({ region, locais, categoria }: Props) {
   if (!region) return null;
 
   return (
-    <View style={{ height: 300, marginTop: 10 }}>
+    <View style={{alignItems: 'center' }}>
       <MapView
         style={styles.map}
         region={region}
