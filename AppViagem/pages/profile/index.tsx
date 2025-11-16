@@ -7,8 +7,22 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import styles from './style'; 
+import { useNavigation } from '@react-navigation/native';
+import { NavigationProp } from '../../navigationTypes';
 
 export default function Perfil() {
+  const navigation = useNavigation<NavigationProp>();
+
+  function handleNavigateToFavoritos() {
+    navigation.navigate('Favorites');
+  }
+  function handleNavigateToQueroVisitar() {
+    navigation.navigate('ToVisit');
+  }
+  function handleNavigateToJaVisitados() {
+    navigation.navigate('Visited');
+  }
+
   return (
     
     <SafeAreaView style={styles.container}>
@@ -23,19 +37,19 @@ export default function Perfil() {
       <View style={styles.listCard}>
 
         {/* Item 1: Favoritos */}
-        <TouchableOpacity style={styles.listItem}>
+        <TouchableOpacity style={styles.listItem} onPress={handleNavigateToFavoritos}>
           <Text style={styles.listText}>Favoritos</Text>
           <Ionicons name="heart" size={24} color="#333" />
         </TouchableOpacity>
 
         {/* Item 2: Quero Visitar */}
-        <TouchableOpacity style={styles.listItem}>
+        <TouchableOpacity style={styles.listItem} onPress={handleNavigateToQueroVisitar}>
           <Text style={styles.listText}>Quero Visitar</Text>
           <Ionicons name="flag" size={24} color="#333" />
         </TouchableOpacity>
 
         {/* Item 3: Já Visitados */}
-        <TouchableOpacity style={styles.listItem}>
+        <TouchableOpacity style={styles.listItem} onPress={handleNavigateToJaVisitados}>
           <Text style={styles.listText}>Já Visitados</Text>
           <Ionicons name="checkmark-circle" size={24} color="#333" />
         </TouchableOpacity>
@@ -45,6 +59,7 @@ export default function Perfil() {
           <Text style={styles.listText}>Adicionados</Text>
           <Ionicons name="add-circle" size={24} color="#333" />
         </TouchableOpacity>
+
         
       </View>
 

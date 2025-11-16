@@ -5,6 +5,9 @@ import Onboarding from './pages/onboarding';
 import Login from './pages/login';
 import Sign from './pages/sign';
 import AppTabs from './navigation/AppTabs';
+import Favorites from './pages/favorites';
+import ToVisit from './pages/to_visit';
+import Visited from './pages/visited';
 import { RootStackParamList } from './navigationTypes';
 
 
@@ -24,6 +27,9 @@ export default function App() {
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Sign" component={Sign} />
         <Stack.Screen name="Home" component={AppTabs} />
+        <Stack.Screen name="Favorites" component={Favorites} />
+        <Stack.Screen name="ToVisit" component={ToVisit} />
+        <Stack.Screen name="Visited" component={Visited} />
       </Stack.Navigator>
     </NavigationContainer>
   );

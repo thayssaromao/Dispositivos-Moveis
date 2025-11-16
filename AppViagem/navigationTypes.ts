@@ -1,7 +1,7 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-// 1. Importe o tipo do AppTabs
+
 import { AppTabParamList } from './navigation/AppTabs';
-// 2. Importe este helper
+
 import { NavigatorScreenParams } from '@react-navigation/native';
 
 export type RootStackParamList = {
@@ -9,6 +9,9 @@ export type RootStackParamList = {
   Login: undefined;
   Sign: undefined;
   Home: NavigatorScreenParams<AppTabParamList> | undefined;
+  Favorites: undefined;
+  ToVisit: undefined;
+  Visited: undefined;
 };
 
 export type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
