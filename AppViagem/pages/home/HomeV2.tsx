@@ -17,6 +17,7 @@ import styles from './style';
 import CategoryList from './components/CategoryList';
 import CustomMap from './components/CustomMap';
 import ButtonMap from './components/ButtonMap';
+import SearchBar from './components/SearchBar';
 
 type Local = {
   nome: string;
@@ -101,11 +102,19 @@ export default function HomeV2() {
           <Text style={styles.headerSubText}>Onde vamos conhecer hoje?</Text>
         </View>
 
-        {/* Barra de busca */}
-        <View style={styles.searchContainer}>
-          <Ionicons name="search" size={20} color="#888" style={styles.searchIcon} />
-          <TextInput placeholder="Pesquise Aqui" style={styles.searchInput} placeholderTextColor="#888" />
-          {/* <Ionicons name="mic-outline" size={22} color="#888" style={styles.micIcon} /> */}
+        <View>
+          <SearchBar 
+            onPlaceSelected={(lat, lng) => {
+              setRegion({
+                latitude: lat,
+                longitude: lng,
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.01,
+              });
+
+              setLocais([{ nome: "Busca", latitude: lat, longitude: lng }]);
+            }}
+          />
         </View>
 
       <View style={{ flex: 1 }}>
