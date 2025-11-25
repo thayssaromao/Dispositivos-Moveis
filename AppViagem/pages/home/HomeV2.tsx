@@ -19,6 +19,32 @@ import CustomMap from './components/CustomMap';
 import ButtonMap from './components/ButtonMap';
 import SearchBar from './components/SearchBar';
 
+import proj4 from "proj4";
+import teatrosJson from "../../assets/data/teatros.json";
+
+//MARK:Função para converter UTM para Latitude/Longitude
+const utmToLatLng = (easting: number, northing: number) => {
+  // SIRGAS 2000 / UTM zone 22S
+  const utm = "+proj=utm +zone=22 +south +ellps=GRS80 +units=m +no_defs";
+  const wgs84 = "+proj=longlat +datum=WGS84 +no_defs";
+
+  const [lon, lat] = proj4(utm, wgs84, [easting, northing]);
+  return { latitude: lat, longitude: lon };
+};
+
+const fetchTeatros = (): Local[] => {
+  return teatrosJson.teatro.map((t: any) => {
+    const { latitude, longitude } = utmToLatLng(t.coord_e, t.coord_n);
+
+    return {
+      nome: t.nome_mapa || t.nome_abrev || "Teatro",
+      latitude,
+      longitude,
+    };
+  });
+};
+
+
 const fetchRealPlaces = async (latitude: number, longitude: number, categoria: string) => {
   const categoryToTag: Record<string, string> = {
     Restaurantes: "amenity=restaurant",
@@ -112,6 +138,12 @@ const handleCategoriaSelecionada = async (categoria: string) => {
 
   setCategoriaSelecionada(categoria);
 
+  if (categoria === "Teatros") {
+    const teatros = fetchTeatros();
+    setLocais(teatros);
+    return;
+  }
+
   const lugares = await fetchRealPlaces(region.latitude, region.longitude, categoria);
 
   if (lugares.length === 0) {
@@ -160,7 +192,7 @@ const handleCategoriaSelecionada = async (categoria: string) => {
         {/* Categorias sobre o mapa */}
         <View style={styles.categoryOverlay}>
           <CategoryList
-            categorias={['Restaurantes', 'Bares']}
+            categorias={['Restaurantes', 'Bares', 'Teatros']} //NOVA CATEGORA BASEADA NO JSON 'TEATROS'
             categoriaSelecionada={categoriaSelecionada}
             onSelecionar={handleCategoriaSelecionada}
           />
@@ -198,7 +230,6 @@ const handleCategoriaSelecionada = async (categoria: string) => {
             ))}
           </ScrollView>
         </View> */}  
-             
     </SafeAreaView>
   );
 }
