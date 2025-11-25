@@ -8,6 +8,10 @@ import {
   TouchableOpacity, 
 } from 'react-native';
 
+import { ImageBackground } from 'react-native';
+
+import { updateProfile } from "firebase/auth";
+
 import styles from './style';
 import { Input } from '../../components/input'; 
 import { useNavigation } from '@react-navigation/native';
@@ -32,8 +36,16 @@ export default function Sign() {
 
   async function handleRegister() {
   try {
-    await createUserWithEmailAndPassword(auth, email, password);
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
+    await updateProfile(user, {
+      displayName: name,
+    });
+
     console.log("Usuário registrado com sucesso!");
+    console.log("Nome salvo no Firebase:", name);
+    
     navigation.navigate('Home');
   } catch (error: any) {
     console.log("Erro ao registrar:", error);
@@ -50,7 +62,12 @@ export default function Sign() {
 }
 
   return (
-    <View style={styles.container}>
+    <ImageBackground 
+      source={require('../../assets/imgs/bg.png')} 
+      style={styles.container}
+      resizeMode="cover"
+    >
+
       <View style={styles.card}>
         <View style={styles.titleContainer}> 
           <Text style={styles.title}>Crie sua Conta!</Text>
@@ -76,9 +93,9 @@ export default function Sign() {
           onChangeText={setPassword}
         />
 
-        <TouchableOpacity style={styles.googleBtn}>
+        {/* <TouchableOpacity style={styles.googleBtn}>
           <Text style={styles.googleText}>G Google</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         <TouchableOpacity style={styles.loginBtn} onPress={handleRegister}>
           <Text style={styles.loginText}>Registrar</Text>
@@ -91,6 +108,6 @@ export default function Sign() {
           </Text>
         </Text>
       </View>
-    </View>
+    </ImageBackground>
   );
 }

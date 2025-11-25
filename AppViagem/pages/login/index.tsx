@@ -15,6 +15,8 @@ import { NavigationProp } from '../../navigationTypes';
 import { auth } from "../../services/firebaseConfig"; 
 import { signInWithEmailAndPassword } from "firebase/auth";
 
+import { ImageBackground } from 'react-native';
+
 export default function Login() {
 
   const navigation = useNavigation<NavigationProp>();
@@ -47,7 +49,11 @@ export default function Login() {
   }
   
   return (
-    <View style={styles.container}>
+     <ImageBackground 
+      source={require('../../assets/imgs/bg.png')} 
+      style={styles.container}
+      resizeMode="cover"
+    >
     
       <View style={styles.card}>
         <View style={styles.titleContainer}> 
@@ -68,9 +74,9 @@ export default function Login() {
           onChangeText={setPassword}
         />
 
-        <TouchableOpacity style={styles.googleBtn}>
+        {/* <TouchableOpacity style={styles.googleBtn}>
           <Text style={styles.googleText}>G Google</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         <TouchableOpacity style={styles.loginBtn} onPress={handleLogin}>
           <Text style={styles.loginText}>Login</Text>
@@ -80,6 +86,6 @@ export default function Login() {
           Não tem uma conta? <Text style={styles.registerLink} onPress={handleNavigateToSignUp}>Crie aqui!</Text>
         </Text>
       </View>
-    </View>
+     </ImageBackground >
   );
 }

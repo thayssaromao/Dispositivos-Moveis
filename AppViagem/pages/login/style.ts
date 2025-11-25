@@ -3,12 +3,12 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#ffffffff",
     justifyContent: "flex-end",
     alignItems: "center",
   },
   card: {
-    backgroundColor: "#d9d9d9",
+    backgroundColor: "#81A4CD",
     width: "100%",
     padding: 20,
     borderTopLeftRadius: 30,
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     width: "90%",
     height: 50,
     borderRadius: 12,
-    backgroundColor: "#555",
+    backgroundColor: "#F17300",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 20,
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   },
   registerText: {
     fontSize: 14,
-    color: "#333",
+    color: "#000000ff",
   },
   registerLink: {
     fontWeight: "bold",

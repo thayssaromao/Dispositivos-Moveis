@@ -16,7 +16,7 @@ export default function CategoryList({ categorias, categoriaSelecionada, onSelec
           key={cat}
           style={[
             styles.categoryCard,
-            categoriaSelecionada === cat && { backgroundColor: '#4A90E2' },
+            categoriaSelecionada === cat && { backgroundColor: '#F17300'},
           ]}
           onTouchEnd={() => onSelecionar(cat)}
         >

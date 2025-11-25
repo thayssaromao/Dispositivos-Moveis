@@ -3,7 +3,7 @@ import { StyleSheet, Platform } from 'react-native';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#81A4CD',
     paddingTop: Platform.OS === 'android' ? 30 : 0, 
   },
   scrollContainer: {
@@ -11,15 +11,16 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
   pageTitle: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 20,
+    color: '#000000ff',
+    marginBottom: 40,
   },
   formContainer: {
     flex: 1,
     width: '100%', 
     alignItems: 'center', 
+    gap:20
   },
   input: {
     width: '90%',
@@ -34,7 +35,7 @@ const styles = StyleSheet.create({
     elevation: 2,
     marginBottom: 15, 
     borderWidth: 1,
-    borderColor: '#e0e0e0'
+    borderColor: '#6b6b6bff'
   },
   textArea: {
     height: 120, 
@@ -46,7 +47,7 @@ const styles = StyleSheet.create({
     width: '90%',
     height: 50,
     borderRadius: 12,
-    backgroundColor: '#555',
+    backgroundColor: '#F17300',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 20, 

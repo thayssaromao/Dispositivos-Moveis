@@ -3,7 +3,7 @@ import { StyleSheet, Platform } from 'react-native';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#81A4CD',
     paddingTop: Platform.OS === 'android' ? 30 : 0, 
   },
   header: {
@@ -12,11 +12,12 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 28,
+    color: '#000000ff',
     fontWeight: 'bold',
   },
   headerSubText: {
     fontSize: 16,
-    color: '#666',
+    color: '#000000ff',
     marginTop: 4,
   },
   searchContainer: {
@@ -32,7 +33,7 @@ const styles = StyleSheet.create({
   },
   categoryOverlay: {
   position: 'absolute',
-  top: 20,
+  top: 25,
   left: 0,
   right: 0,
   alignItems: 'center',

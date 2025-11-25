@@ -9,6 +9,7 @@ import { Ionicons } from '@expo/vector-icons';
 import styles from './style'; 
 import { useNavigation } from '@react-navigation/native';
 import { NavigationProp } from '../../navigationTypes';
+import { auth } from "../../services/firebaseConfig";
 
 export default function Perfil() {
   const navigation = useNavigation<NavigationProp>();
@@ -33,7 +34,8 @@ export default function Perfil() {
       {/* 1. Cabeçalho do Perfil */}
       <View style={styles.profileHeader}>
         <Ionicons name="person-circle-outline" size={64} color="#c0c0c0" />
-        <Text style={styles.profileName}>Nome de Fulano</Text>
+        <Text style={styles.profileName}>{auth.currentUser?.displayName
+        }</Text>
       </View>
 
       {/* 2. Card com a lista de opções */}

@@ -24,6 +24,8 @@ import teatrosJson from "../../assets/data/teatros.json";
 import artesJson from "../../assets/data/artes.json";
 import museuJson from "../../assets/data/museus.json";
 
+import { auth } from "../../services/firebaseConfig";
+
 //MARK:Função para converter UTM para Latitude/Longitude
 const utmToLatLng = (easting: number, northing: number) => {
   // SIRGAS 2000 / UTM zone 22S
@@ -203,7 +205,8 @@ const handleCategoriaSelecionada = async (categoria: string) => {
     <SafeAreaView style={styles.container}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.headerText}>Olá, Fulano!</Text>
+          <Text style={styles.headerText}>Olá, {auth.currentUser?.displayName
+}!</Text>
           <Text style={styles.headerSubText}>Onde vamos conhecer hoje?</Text>
         </View>
 

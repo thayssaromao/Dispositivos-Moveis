@@ -53,8 +53,8 @@ export default function SearchBar({ onPlaceSelected }: { onPlaceSelected: (lat: 
     <View style={{
       flexDirection: "row",
       alignItems: "center",
-      backgroundColor: "#dedadaff",
-      borderRadius: 12,
+      backgroundColor: "#ffffffff",
+      borderRadius: 22,
       paddingHorizontal: 20,
       margin:20,
       height: 50,
@@ -77,7 +77,7 @@ export default function SearchBar({ onPlaceSelected }: { onPlaceSelected: (lat: 
         <Ionicons
           name="arrow-forward-circle"
           size={24}
-          color="#888"
+          color="#F17300"
           onPress={searchLocation}
         />
       )}
