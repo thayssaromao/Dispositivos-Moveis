@@ -1,1 +1,6 @@
 AppViagem/package-lock.json
+node_modules/
+.expo/
+.vscode/
+npm-debug.log
+yarn-error.log

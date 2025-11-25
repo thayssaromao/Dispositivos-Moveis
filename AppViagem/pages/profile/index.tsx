@@ -22,6 +22,9 @@ export default function Perfil() {
   function handleNavigateToJaVisitados() {
     navigation.navigate('Visited');
   }
+  function handleNavigateToMeusDados() {
+    
+  }
 
   return (
     
@@ -37,6 +40,12 @@ export default function Perfil() {
       <View style={styles.listCard}>
 
         {/* Item 1: Favoritos */}
+
+        <TouchableOpacity style={styles.listItem} onPress={handleNavigateToMeusDados}>
+          <Text style={styles.listText}>Minhas Informações</Text>
+          <Ionicons name="person" size={24} color="#333" />
+        </TouchableOpacity>
+
         <TouchableOpacity style={styles.listItem} onPress={handleNavigateToFavoritos}>
           <Text style={styles.listText}>Favoritos</Text>
           <Ionicons name="heart" size={24} color="#333" />
