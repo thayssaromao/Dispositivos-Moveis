@@ -11,11 +11,13 @@ type Local = {
 
 type Props = {
   region: Region | null;
-  locais: Local[];
+  locaisCategoria: Local[];
+  localBusca: Local | null;
   categoria: string | null;
 };
 
-export default function CustomMap({ region, locais, categoria }: Props) {
+
+export default function CustomMap({ region, locaisCategoria, localBusca, categoria}: Props) {
   if (!region) return null;
 
   return (
@@ -25,15 +27,23 @@ export default function CustomMap({ region, locais, categoria }: Props) {
         region={region}
         showsUserLocation
       >
-        {locais.map((local, index) => (
-          <Marker
-            key={index}
-            coordinate={{ latitude: local.latitude, longitude: local.longitude }}
-            title={local.nome}
-            description={categoria || ''}
-            pinColor="#FF6347"
-          />
-        ))}
+        {locaisCategoria.map((item, i) => (
+  <Marker
+    key={"cat-" + i}
+    coordinate={{ latitude: item.latitude, longitude: item.longitude }}
+    title={item.nome}
+    pinColor="red" 
+  />
+))}
+
+{localBusca && (
+  <Marker
+    coordinate={{ latitude: localBusca.latitude, longitude: localBusca.longitude }}
+    title={localBusca.nome}
+    pinColor="blue"
+  />
+)}
+
       </MapView>
     </View>
   );

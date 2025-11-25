@@ -21,6 +21,8 @@ import SearchBar from './components/SearchBar';
 
 import proj4 from "proj4";
 import teatrosJson from "../../assets/data/teatros.json";
+import artesJson from "../../assets/data/artes.json";
+import museuJson from "../../assets/data/museus.json";
 
 //MARK:Função para converter UTM para Latitude/Longitude
 const utmToLatLng = (easting: number, northing: number) => {
@@ -43,7 +45,29 @@ const fetchTeatros = (): Local[] => {
     };
   });
 };
+const fetchArte = (): Local[] => {
+  return artesJson.espaco_expositivo_de_artes.map((t: any) => {
+    const { latitude, longitude } = utmToLatLng(t.coord_e, t.coord_n);
 
+    return {
+      nome: t.nome_mapa || t.nome_abrev || "Arte",
+      latitude,
+      longitude,
+    };
+  });
+};
+
+const fetchMuseu = (): Local[] => {
+  return museuJson.museu.map((t: any) => {
+    const { latitude, longitude } = utmToLatLng(t.coord_e, t.coord_n);
+
+    return {
+      nome: t.nome_mapa || t.nome_abrev || "Museu",
+      latitude,
+      longitude,
+    };
+  });
+};
 
 const fetchRealPlaces = async (latitude: number, longitude: number, categoria: string) => {
   const categoryToTag: Record<string, string> = {
@@ -99,7 +123,9 @@ export default function HomeV2() {
   const [region, setRegion] = useState<Region | null>(null);
   const [loading, setLoading] = useState(true);
   const [categoriaSelecionada, setCategoriaSelecionada] = useState<string | null>(null);
-  const [locais, setLocais] = useState<Local[]>([]);
+ const [locaisCategoria, setLocaisCategoria] = useState<Local[]>([]);
+  const [localBusca, setLocalBusca] = useState<Local | null>(null);
+
 
   /* MARK: Pedir permissão de localização para usuário */
   useEffect(() => {
@@ -137,10 +163,20 @@ const handleCategoriaSelecionada = async (categoria: string) => {
   if (!region) return;
 
   setCategoriaSelecionada(categoria);
+  setLocalBusca(null); // 🔥 limpa o pin da busca quando troca categoria
 
   if (categoria === "Teatros") {
-    const teatros = fetchTeatros();
-    setLocais(teatros);
+    setLocaisCategoria(fetchTeatros());
+    return;
+  }
+
+  if (categoria === "Arte") {
+    setLocaisCategoria(fetchArte());
+    return;
+  }
+
+  if (categoria === "Museu") {
+    setLocaisCategoria(fetchMuseu());
     return;
   }
 
@@ -150,8 +186,9 @@ const handleCategoriaSelecionada = async (categoria: string) => {
     Alert.alert("Nenhum local encontrado", "Não há locais próximos para esta categoria.");
   }
 
-  setLocais(lugares);
+  setLocaisCategoria(lugares);
 };
+
 
   if (loading) {
     return (
@@ -180,19 +217,30 @@ const handleCategoriaSelecionada = async (categoria: string) => {
                 longitudeDelta: 0.01,
               });
 
-              setLocais([{ nome: "Busca", latitude: lat, longitude: lng }]);
+              setLocalBusca({
+                nome: "Resultado da busca",
+                latitude: lat,
+                longitude: lng
+              });
             }}
           />
+
         </View>
 
       <View style={{ flex: 1 }}>
         {/* Mapa */}
-        <CustomMap region={region} locais={locais} categoria={categoriaSelecionada} />
+        <CustomMap
+          region={region}
+          locaisCategoria={locaisCategoria}
+          localBusca={localBusca}
+          categoria={categoriaSelecionada}
+        />
+
 
         {/* Categorias sobre o mapa */}
         <View style={styles.categoryOverlay}>
           <CategoryList
-            categorias={['Restaurantes', 'Bares', 'Teatros']} //NOVA CATEGORA BASEADA NO JSON 'TEATROS'
+            categorias={['Restaurantes', 'Bares', 'Teatros', 'Arte', 'Museu']}
             categoriaSelecionada={categoriaSelecionada}
             onSelecionar={handleCategoriaSelecionada}
           />
