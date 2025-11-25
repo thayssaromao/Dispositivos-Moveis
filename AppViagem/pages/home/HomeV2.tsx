@@ -19,6 +19,50 @@ import CustomMap from './components/CustomMap';
 import ButtonMap from './components/ButtonMap';
 import SearchBar from './components/SearchBar';
 
+const fetchRealPlaces = async (latitude: number, longitude: number, categoria: string) => {
+  const categoryToTag: Record<string, string> = {
+    Restaurantes: "amenity=restaurant",
+    Bares: "amenity=bar",
+  };
+
+  const tag = categoryToTag[categoria];
+  if (!tag) return [];
+
+  // Define uma bounding box de 1.5 km ao redor da pessoa
+  const delta = 0.015;
+  const viewbox = [
+    longitude - delta, // left
+    latitude + delta,  // top
+    longitude + delta, // right
+    latitude - delta   // bottom
+  ].join(',');
+
+  const url = `https://nominatim.openstreetmap.org/search?format=json` +
+              `&${tag}` +
+              `&bounded=1&viewbox=${viewbox}` +
+              `&limit=30`;
+
+  try {
+    const response = await fetch(url, {
+      headers: { "User-Agent": "ReactNativeApp/1.0" },
+    });
+
+    const data = await response.json();
+
+    if (!Array.isArray(data)) return [];
+
+    return data.map((item: any) => ({
+      nome: item.display_name,
+      latitude: parseFloat(item.lat),
+      longitude: parseFloat(item.lon),
+    }));
+  } catch (e) {
+    console.log("Erro ao buscar lugares reais:", e);
+    return [];
+  }
+};
+
+
 type Local = {
   nome: string;
   latitude: number;
@@ -63,27 +107,19 @@ export default function HomeV2() {
   }, []);
 
   /* Função que gera locais de exemplo */
-  const handleCategoriaSelecionada = (categoria: string) => {
-    if (!region) return;
+const handleCategoriaSelecionada = async (categoria: string) => {
+  if (!region) return;
 
-    const placeholdersLocais: Record<string, Local[]> = {
-      Restaurantes: [
-        { nome: 'Restaurante A', latitude: region.latitude + 0.001, longitude: region.longitude + 0.001 },
-        { nome: 'Restaurante B', latitude: region.latitude - 0.001, longitude: region.longitude - 0.001 },
-      ],
-      Bares: [
-        { nome: 'Bar A', latitude: region.latitude + 0.002, longitude: region.longitude + 0.002 },
-        { nome: 'Bar B', latitude: region.latitude - 0.002, longitude: region.longitude - 0.002 },
-      ],
-      Baladas: [
-        { nome: 'Atração A', latitude: region.latitude + 0.003, longitude: region.longitude + 0.003 },
-        { nome: 'Atração B', latitude: region.latitude - 0.003, longitude: region.longitude - 0.003 },
-      ],
-    };
+  setCategoriaSelecionada(categoria);
 
-    setLocais(placeholdersLocais[categoria] || []);
-    setCategoriaSelecionada(categoria);
-  };
+  const lugares = await fetchRealPlaces(region.latitude, region.longitude, categoria);
+
+  if (lugares.length === 0) {
+    Alert.alert("Nenhum local encontrado", "Não há locais próximos para esta categoria.");
+  }
+
+  setLocais(lugares);
+};
 
   if (loading) {
     return (
@@ -124,7 +160,7 @@ export default function HomeV2() {
         {/* Categorias sobre o mapa */}
         <View style={styles.categoryOverlay}>
           <CategoryList
-            categorias={['Restaurantes', 'Bares', 'Parques', 'Cafeterias', 'Baladas']}
+            categorias={['Restaurantes', 'Bares']}
             categoriaSelecionada={categoriaSelecionada}
             onSelecionar={handleCategoriaSelecionada}
           />
@@ -161,7 +197,8 @@ export default function HomeV2() {
               </View>
             ))}
           </ScrollView>
-        </View> */}       
+        </View> */}  
+             
     </SafeAreaView>
   );
 }
