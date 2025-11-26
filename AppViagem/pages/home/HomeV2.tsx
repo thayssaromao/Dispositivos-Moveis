@@ -3,284 +3,270 @@ import {
   View,
   Text,
   TextInput,
-  ScrollView,
-  Image,
   SafeAreaView,
   Alert,
   ActivityIndicator,
+  Image,
+  TouchableOpacity,
+  Dimensions,
+  FlatList,
+  ScrollView,
+  Platform
 } from 'react-native';
+
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { Region } from 'react-native-maps';
 
-import styles from './style';
-import CategoryList from './components/CategoryList';
+import styles from './style'; // Certifique-se que os estilos novos estão aqui
+// Mantendo seus componentes
 import CustomMap from './components/CustomMap';
-import ButtonMap from './components/ButtonMap';
-import SearchBar from './components/SearchBar';
+import ButtonMap from './components/ButtonMap'; 
+// import SearchBar from './components/SearchBar'; <--- Vamos substituir por uma barra de filtro visual direta
 
-import proj4 from "proj4";
-import teatrosJson from "../../assets/data/teatros.json";
-import artesJson from "../../assets/data/artes.json";
-import museuJson from "../../assets/data/museus.json";
+// Firebase
+import { auth, db } from "../../services/firebaseConfig";
+import { collection, getDocs } from 'firebase/firestore';
 
-import { auth } from "../../services/firebaseConfig";
+const { width } = Dimensions.get('window');
 
-//MARK:Função para converter UTM para Latitude/Longitude
-const utmToLatLng = (easting: number, northing: number) => {
-  // SIRGAS 2000 / UTM zone 22S
-  const utm = "+proj=utm +zone=22 +south +ellps=GRS80 +units=m +no_defs";
-  const wgs84 = "+proj=longlat +datum=WGS84 +no_defs";
-
-  const [lon, lat] = proj4(utm, wgs84, [easting, northing]);
-  return { latitude: lat, longitude: lon };
-};
-
-const fetchTeatros = (): Local[] => {
-  return teatrosJson.teatro.map((t: any) => {
-    const { latitude, longitude } = utmToLatLng(t.coord_e, t.coord_n);
-
-    return {
-      nome: t.nome_mapa || t.nome_abrev || "Teatro",
-      latitude,
-      longitude,
-    };
-  });
-};
-const fetchArte = (): Local[] => {
-  return artesJson.espaco_expositivo_de_artes.map((t: any) => {
-    const { latitude, longitude } = utmToLatLng(t.coord_e, t.coord_n);
-
-    return {
-      nome: t.nome_mapa || t.nome_abrev || "Arte",
-      latitude,
-      longitude,
-    };
-  });
-};
-
-const fetchMuseu = (): Local[] => {
-  return museuJson.museu.map((t: any) => {
-    const { latitude, longitude } = utmToLatLng(t.coord_e, t.coord_n);
-
-    return {
-      nome: t.nome_mapa || t.nome_abrev || "Museu",
-      latitude,
-      longitude,
-    };
-  });
-};
-
-const fetchRealPlaces = async (latitude: number, longitude: number, categoria: string) => {
-  const categoryToTag: Record<string, string> = {
-    Restaurantes: "amenity=restaurant",
-    Bares: "amenity=bar",
-  };
-
-  const tag = categoryToTag[categoria];
-  if (!tag) return [];
-
-  // Define uma bounding box de 1.5 km ao redor da pessoa
-  const delta = 0.015;
-  const viewbox = [
-    longitude - delta, // left
-    latitude + delta,  // top
-    longitude + delta, // right
-    latitude - delta   // bottom
-  ].join(',');
-
-  const url = `https://nominatim.openstreetmap.org/search?format=json` +
-              `&${tag}` +
-              `&bounded=1&viewbox=${viewbox}` +
-              `&limit=30`;
-
-  try {
-    const response = await fetch(url, {
-      headers: { "User-Agent": "ReactNativeApp/1.0" },
-    });
-
-    const data = await response.json();
-
-    if (!Array.isArray(data)) return [];
-
-    return data.map((item: any) => ({
-      nome: item.display_name,
-      latitude: parseFloat(item.lat),
-      longitude: parseFloat(item.lon),
-    }));
-  } catch (e) {
-    console.log("Erro ao buscar lugares reais:", e);
-    return [];
-  }
-};
-
-
+// Tipagem do Local (Baseado no seu BD)
 type Local = {
+  id: string;
   nome: string;
+  categoria: string;
+  descricao?: string;
   latitude: number;
   longitude: number;
+  imagem?: string;
+  status?: string;
 };
 
 export default function HomeV2() {
+  // Estados de Mapa e Locais
   const [region, setRegion] = useState<Region | null>(null);
   const [loading, setLoading] = useState(true);
+  
+  // Estados de Dados
+  const [todosLocais, setTodosLocais] = useState<Local[]>([]);
+  const [locaisFiltrados, setLocaisFiltrados] = useState<Local[]>([]);
+  
+  // Estados de Filtro
   const [categoriaSelecionada, setCategoriaSelecionada] = useState<string | null>(null);
- const [locaisCategoria, setLocaisCategoria] = useState<Local[]>([]);
-  const [localBusca, setLocalBusca] = useState<Local | null>(null);
+  const [textoBusca, setTextoBusca] = useState('');
 
-
-  /* MARK: Pedir permissão de localização para usuário */
+  // 1. Permissão e Localização (MANTIDO DO SEU CÓDIGO ORIGINAL)
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
-
       if (status !== 'granted') {
         Alert.alert('Permissão negada', 'Precisamos de sua permissão para acessar a localização.');
-        setRegion({
-          latitude: -23.5505,
-          longitude: -46.6333,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        });
+        // Default SP
+        setRegion({ latitude: -23.5505, longitude: -46.6333, latitudeDelta: 0.05, longitudeDelta: 0.05 });
         setLoading(false);
         return;
       }
 
       const location = await Location.getCurrentPositionAsync({});
-      const { latitude, longitude } = location.coords;
-
       setRegion({
-        latitude,
-        longitude,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01,
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.015,
+        longitudeDelta: 0.015,
       });
-
       setLoading(false);
     })();
   }, []);
 
-  /* Função que gera locais de exemplo */
-const handleCategoriaSelecionada = async (categoria: string) => {
-  if (!region) return;
+  // 2. Buscar dados do Firebase (NOVO)
+  useEffect(() => {
+    async function fetchLocaisFirebase() {
+      try {
+        const querySnapshot = await getDocs(collection(db, "locais"));
+        const lista = querySnapshot.docs.map(doc => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            nome: data.nome,
+            categoria: data.categoria,
+            descricao: data.descricao,
+            latitude: parseFloat(data.latitude || 0), 
+            longitude: parseFloat(data.longitude || 0),
+            imagem: data.imagem,
+            status: data.status
+          } as Local;
+        });
+        
+        // Filtra apenas locais que tenham lat/long válidos para não quebrar o mapa
+        const locaisValidos = lista.filter(l => l.latitude !== 0 && l.longitude !== 0);
+        
+        setTodosLocais(locaisValidos);
+        setLocaisFiltrados(locaisValidos);
+      } catch (error) {
+        console.log("Erro ao buscar locais:", error);
+      }
+    }
+    fetchLocaisFirebase();
+  }, []);
 
-  setCategoriaSelecionada(categoria);
-  setLocalBusca(null); // 🔥 limpa o pin da busca quando troca categoria
+  // 3. Lógica de Filtro (Texto + Categoria)
+  useEffect(() => {
+    let resultado = todosLocais;
 
-  if (categoria === "Teatros") {
-    setLocaisCategoria(fetchTeatros());
-    return;
-  }
+    if (textoBusca) {
+      resultado = resultado.filter(item => 
+        item.nome.toLowerCase().includes(textoBusca.toLowerCase()) ||
+        (item.descricao && item.descricao.toLowerCase().includes(textoBusca.toLowerCase()))
+      );
+    }
 
-  if (categoria === "Arte") {
-    setLocaisCategoria(fetchArte());
-    return;
-  }
+    if (categoriaSelecionada) {
+      // Comparação flexível (includes) para pegar "Restaurante" ou "Restaurantes"
+      resultado = resultado.filter(item => 
+        item.categoria.toLowerCase().includes(categoriaSelecionada.toLowerCase())
+      );
+    }
 
-  if (categoria === "Museu") {
-    setLocaisCategoria(fetchMuseu());
-    return;
-  }
+    setLocaisFiltrados(resultado);
+  }, [textoBusca, categoriaSelecionada, todosLocais]);
 
-  const lugares = await fetchRealPlaces(region.latitude, region.longitude, categoria);
+  // Função para centralizar no usuário (MANTIDO)
+  const handleCenterUser = async () => {
+    try {
+      const location = await Location.getCurrentPositionAsync({});
+      setRegion({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.015,
+        longitudeDelta: 0.015,
+      });
+    } catch (error) {
+      Alert.alert('Erro', 'Não foi possível obter a localização.');
+    }
+  };
 
-  if (lugares.length === 0) {
-    Alert.alert("Nenhum local encontrado", "Não há locais próximos para esta categoria.");
-  }
+  // Renderiza o Card do Carrossel (NOVO)
+  const renderCard = ({ item }: { item: Local }) => (
+    <TouchableOpacity 
+      style={styles.cardLocal}
+      onPress={() => {
+        // Ao clicar no card, centra o mapa no local
+        setRegion({
+          latitude: item.latitude,
+          longitude: item.longitude,
+          latitudeDelta: 0.005,
+          longitudeDelta: 0.005,
+        });
+      }}
+    >
+      <Image 
+        source={{ uri: item.imagem || 'https://via.placeholder.com/150' }} 
+        style={styles.cardImage} 
+      />
+      <View style={styles.cardInfo}>
+        <Text style={styles.cardTitle}>{item.nome}</Text>
+        <Text style={styles.cardCategory}>{item.categoria}</Text>
+        <Text numberOfLines={1} style={styles.cardDesc}>{item.descricao}</Text>
+        <View style={styles.ratingContainer}>
+          <Ionicons name="star" size={12} color="#FFD700" />
+          <Text style={styles.ratingText}>4.5</Text>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
 
-  setLocaisCategoria(lugares);
-};
-
+  // Lista de categorias para o filtro visual
+  const categoriasVisuais = ['Restaurante', 'Bares', 'Teatro', 'Arte', 'Museu', 'Parque'];
 
   if (loading) {
     return (
       <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
         <ActivityIndicator size="large" color="#000" />
-        <Text>Carregando mapa...</Text>
       </View>
     );
   }
 
   return (
     <SafeAreaView style={styles.container}>
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.headerText}>Olá, {auth.currentUser?.displayName
-}!</Text>
-          <Text style={styles.headerSubText}>Onde vamos conhecer hoje?</Text>
-        </View>
+      
+      {/* 1. Header */}
+      <View style={styles.headerContainer}>
+        <Text style={styles.greetingTitle}>Olá, {auth.currentUser?.displayName || 'Viajante'}!</Text>
+        <Text style={styles.greetingSub}>Onde vamos conhecer hoje?</Text>
+      </View>
 
-        <View>
-          <SearchBar 
-            onPlaceSelected={(lat, lng) => {
-              setRegion({
-                latitude: lat,
-                longitude: lng,
-                latitudeDelta: 0.01,
-                longitudeDelta: 0.01,
-              });
-
-              setLocalBusca({
-                nome: "Resultado da busca",
-                latitude: lat,
-                longitude: lng
-              });
-            }}
+      {/* 2. Barra de Busca e Filtros  */}
+      <View style={{ zIndex: 10 }}> 
+        <View style={styles.searchContainer}>
+          <Ionicons name="search" size={20} color="#999" style={{marginRight: 10}} />
+          <TextInput
+            placeholder="Pesquise por nome..."
+            style={styles.searchInput}
+            value={textoBusca}
+            onChangeText={setTextoBusca}
           />
-
         </View>
 
-      <View style={{ flex: 1 }}>
-        {/* Mapa */}
+        {/* Lista Horizontal de Categorias */}
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false} 
+          contentContainerStyle={styles.categoriesContainer}
+          style={{ maxHeight: 60 }}
+        >
+          {categoriasVisuais.map((cat) => (
+            <TouchableOpacity 
+              key={cat} 
+              style={[
+                styles.categoryBtn, 
+                categoriaSelecionada === cat && styles.categoryBtnActive
+              ]}
+              onPress={() => setCategoriaSelecionada(categoriaSelecionada === cat ? null : cat)}
+            >
+              <Text style={[styles.categoryText, categoriaSelecionada === cat && styles.categoryTextActive]}>
+                {cat}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+
+      {/* 3. Mapa */}
+      <View style={styles.mapContainer}>
         <CustomMap
           region={region}
-          locaisCategoria={locaisCategoria}
-          localBusca={localBusca}
+          // Passamos os locais filtrados do Firebase para o seu mapa exibir os pinos
+          locaisCategoria={locaisFiltrados} 
+          localBusca={null}
           categoria={categoriaSelecionada}
         />
-
-
-        {/* Categorias sobre o mapa */}
-        <View style={styles.categoryOverlay}>
-          <CategoryList
-            categorias={['Restaurantes', 'Bares', 'Teatros', 'Arte', 'Museu']}
-            categoriaSelecionada={categoriaSelecionada}
-            onSelecionar={handleCategoriaSelecionada}
-          />
-          <ButtonMap
-            onPress={async () => {
-              try {
-                const location = await Location.getCurrentPositionAsync({});
-                const { latitude, longitude } = location.coords;
-                setRegion({
-                  latitude,
-                  longitude,
-                  latitudeDelta: 0.01,
-                  longitudeDelta: 0.01,
-                });
-                
-              } catch (error) {
-                Alert.alert('Erro', 'Não foi possível obter a localização atual.');
-              }
-            }}
-          />
-
+        
+        {/* Botão de recentralizar */}
+        <View style={styles.recenterButtonContainer}>
+             <ButtonMap onPress={handleCenterUser} />
         </View>
       </View>
 
+      {/* 4. Lista Inferior Flutuante (NOVA FEATURE) */}
+      <View style={styles.bottomListContainer}>
+        {locaisFiltrados.length > 0 ? (
+          <FlatList
+            data={locaisFiltrados}
+            keyExtractor={item => item.id}
+            renderItem={renderCard}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            snapToInterval={width * 0.8 + 15}
+            decelerationRate="fast"
+            contentContainerStyle={{ paddingHorizontal: 20 }}
+          />
+        ) : (
+          <View style={styles.emptyCard}>
+            <Text>Nenhum local encontrado nesta área.</Text>
+          </View>
+        )}
+      </View>
 
-        {/* Melhores Avaliados
-        <View style={styles.sectionContainer}>
-          <Text style={styles.sectionTitleCard}>Melhores Avaliados</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {Array(5).fill(0).map((_, i) => (
-              <View style={styles.placeCard} key={i}>
-                <Image source={{ uri: 'https://via.placeholder.com/150' }} style={styles.cardImage} />
-                <Text style={styles.cardTitle}>Lugar {i + 1}</Text>
-              </View>
-            ))}
-          </ScrollView>
-        </View> */}  
     </SafeAreaView>
   );
 }

@@ -12,6 +12,8 @@ export type RootStackParamList = {
   Favorites: undefined;
   ToVisit: undefined;
   Visited: undefined;
+  Added: undefined;
+  Reports: undefined;
 };
 
 export type NavigationProp = NativeStackNavigationProp<RootStackParamList>;

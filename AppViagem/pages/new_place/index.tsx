@@ -13,7 +13,7 @@ import styles from './style';
 import { Input } from '../../components/input'; 
 
 // IMPORTS DO FIREBASE
-import { db } from '../../services/firebaseConfig'; // Ajuste o caminho se necessário
+import { db, auth } from '../../services/firebaseConfig'; 
 import { collection, addDoc } from 'firebase/firestore';
 
 export default function NovoLugar() {
@@ -47,7 +47,8 @@ export default function NovoLugar() {
         descricao: descricao,
         // Dados adicionais úteis
         dataCriacao: new Date().toISOString(),
-        status: 'Aberto' // Valor padrão
+        status: 'Aberto',
+        usuarioId: auth.currentUser ? auth.currentUser.uid : 'anonimo'
       };
 
       // ENVIA PARA O FIREBASE (Coleção 'locais')

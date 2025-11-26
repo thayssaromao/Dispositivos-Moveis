@@ -8,6 +8,8 @@ import AppTabs from './navigation/AppTabs';
 import Favorites from './pages/favorites';
 import ToVisit from './pages/to_visit';
 import Visited from './pages/visited';
+import Added from './pages/added';
+import Reports from './pages/reports';
 import { RootStackParamList } from './navigationTypes';
 
 
@@ -30,6 +32,9 @@ export default function App() {
         <Stack.Screen name="Favorites" component={Favorites} />
         <Stack.Screen name="ToVisit" component={ToVisit} />
         <Stack.Screen name="Visited" component={Visited} />
+        <Stack.Screen name="Added" component={Added} />
+        <Stack.Screen name="Reports" component={Reports} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );

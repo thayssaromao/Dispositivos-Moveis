@@ -23,8 +23,11 @@ export default function Perfil() {
   function handleNavigateToJaVisitados() {
     navigation.navigate('Visited');
   }
-  function handleNavigateToMeusDados() {
-    
+  function handleNavigateToAdicionados() {
+    navigation.navigate('Added');
+  }
+  function handleNavigateToRelatorios() {
+    navigation.navigate('Reports');
   }
 
   return (
@@ -43,32 +46,32 @@ export default function Perfil() {
 
         {/* Item 1: Favoritos */}
 
-        <TouchableOpacity style={styles.listItem} onPress={handleNavigateToMeusDados}>
-          <Text style={styles.listText}>Minhas Informações</Text>
-          <Ionicons name="person" size={24} color="#333" />
+        <TouchableOpacity style={styles.listItem} onPress={handleNavigateToRelatorios}>
+          <Text style={styles.listText}>Relatórios</Text>
+          <Ionicons name="bar-chart" size={24} color="#FF8C00" />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.listItem} onPress={handleNavigateToFavoritos}>
           <Text style={styles.listText}>Favoritos</Text>
-          <Ionicons name="heart" size={24} color="#333" />
+          <Ionicons name="heart" size={24} color="#FF8C00" />
         </TouchableOpacity>
 
         {/* Item 2: Quero Visitar */}
         <TouchableOpacity style={styles.listItem} onPress={handleNavigateToQueroVisitar}>
           <Text style={styles.listText}>Quero Visitar</Text>
-          <Ionicons name="flag" size={24} color="#333" />
+          <Ionicons name="flag" size={24} color="#FF8C00" />
         </TouchableOpacity>
 
         {/* Item 3: Já Visitados */}
         <TouchableOpacity style={styles.listItem} onPress={handleNavigateToJaVisitados}>
           <Text style={styles.listText}>Já Visitados</Text>
-          <Ionicons name="checkmark-circle" size={24} color="#333" />
+          <Ionicons name="checkmark-circle" size={24} color="#FF8C00" />
         </TouchableOpacity>
 
         {/* Item 4: Adicionados */}
-        <TouchableOpacity style={[styles.listItem, styles.lastListItem]}>
+        <TouchableOpacity style={[styles.listItem, styles.lastListItem]} onPress={handleNavigateToAdicionados}>
           <Text style={styles.listText}>Adicionados</Text>
-          <Ionicons name="add-circle" size={24} color="#333" />
+          <Ionicons name="add-circle" size={24} color="#FF8C00" />
         </TouchableOpacity>
 
         

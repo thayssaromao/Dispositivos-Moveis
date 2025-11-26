@@ -3,7 +3,7 @@ import { StyleSheet, Platform } from 'react-native';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f0f0f0', 
+    backgroundColor: '#81A4CD', 
     paddingTop: Platform.OS === 'android' ? 30 : 0, 
   },
   profileHeader: {
@@ -13,10 +13,10 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
   },
   profileName: {
-    fontSize: 22,
+    fontSize: 28,
     fontWeight: 'bold',
     marginLeft: 15,
-    color: '#333',
+    color: '#000000ff',
   },
   listCard: {
     backgroundColor: '#fff',
@@ -32,14 +32,14 @@ const styles = StyleSheet.create({
     paddingVertical: 18,
     paddingHorizontal: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#f5f5f5', 
+    borderBottomColor: '#dbdbdbff', 
   },
   lastListItem: {
     borderBottomWidth: 0,
   },
   listText: {
     fontSize: 16,
-    color: '#333',
+    color: '#000000',
   },
 });
 
