@@ -76,6 +76,12 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
 
+  recenterButtonContainer: {
+    position: 'absolute',
+    right: 20, 
+    bottom: 170, 
+    backgroundColor: 'transparent', 
+  },
   // --- MAPA E CAMADAS FLUTUANTES ---
   
   // O Container do Mapa ocupa o espaço restante
@@ -85,17 +91,7 @@ const styles = StyleSheet.create({
   },
 
   // Botão de Centralizar (Flutuante)
-  recenterButtonContainer: {
-    position: 'absolute',
-    right: 20,
-    bottom: 160, // Fica acima da lista de cards
-    backgroundColor: '#fff',
-    borderRadius: 30,
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-  },
+  
 
   // Lista Inferior (Carrossel Flutuante)
   bottomListContainer: {

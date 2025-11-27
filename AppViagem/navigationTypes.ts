@@ -4,6 +4,20 @@ import { AppTabParamList } from './navigation/AppTabs';
 
 import { NavigatorScreenParams } from '@react-navigation/native';
 
+export type LocalType = {
+  id: string;
+  nome: string;
+  categoria: string;
+  descricao?: string;
+  latitude: number;
+  longitude: number;
+  imagem?: string;
+  status?: string;
+  usuarioId?: string; // ID de quem criou
+  endereco?: string; 
+  cidade?: string;
+};
+
 export type RootStackParamList = {
   Onboarding: undefined;
   Login: undefined;
@@ -14,6 +28,7 @@ export type RootStackParamList = {
   Visited: undefined;
   Added: undefined;
   Reports: undefined;
+  PlaceDetail: { local: LocalType };
 };
 
 export type NavigationProp = NativeStackNavigationProp<RootStackParamList>;

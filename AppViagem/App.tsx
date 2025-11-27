@@ -10,6 +10,7 @@ import ToVisit from './pages/to_visit';
 import Visited from './pages/visited';
 import Added from './pages/added';
 import Reports from './pages/reports';
+import PlaceDetails from './pages/place_details';
 import { RootStackParamList } from './navigationTypes';
 
 
@@ -34,6 +35,16 @@ export default function App() {
         <Stack.Screen name="Visited" component={Visited} />
         <Stack.Screen name="Added" component={Added} />
         <Stack.Screen name="Reports" component={Reports} />
+        
+        <Stack.Screen 
+          name="PlaceDetail" 
+          component={PlaceDetails}
+          options={{ 
+            headerShown: true, 
+            title: 'Detalhes do Local',
+            headerTintColor: '#333'
+          }}
+        />
 
       </Stack.Navigator>
     </NavigationContainer>

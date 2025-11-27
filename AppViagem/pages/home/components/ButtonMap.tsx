@@ -1,39 +1,32 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-interface ButtonMapProps {
+type Props = {
   onPress: () => void;
-}
+};
 
-export default function ButtonMap({ onPress }: ButtonMapProps) {
+export default function ButtonMap({ onPress }: Props) {
   return (
-    <TouchableOpacity style={styles.button} onPress={onPress}>
-      <Ionicons name="locate-outline" size={25} color="#fff" />
+    <TouchableOpacity style={styles.container} onPress={onPress}>
+      <Ionicons name="locate" size={24} color="#fff" />
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
-  button: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
+  container: {
     width: 50,
     height: 50,
     backgroundColor: '#F17300',
-    borderRadius: 30,
-    position: 'absolute',
-    top: 450,
-    right: 20,
-    shadowColor: '#000',
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
+    borderRadius: 25, // Redondo
+    justifyContent: 'center',
+    alignItems: 'center',
+    // Sombras para parecer flutuante
     elevation: 5,
-  },
-  text: {
-    color: '#fff',
-    fontWeight: '600',
-    marginLeft: 6,
+    shadowColor: '#fff',
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    shadowOffset: { width: 0, height: 2 },
   },
 });

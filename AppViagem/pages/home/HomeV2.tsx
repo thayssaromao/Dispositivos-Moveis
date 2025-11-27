@@ -18,19 +18,20 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { Region } from 'react-native-maps';
 
-import styles from './style'; // Certifique-se que os estilos novos estão aqui
-// Mantendo seus componentes
+import styles from './style'; 
 import CustomMap from './components/CustomMap';
 import ButtonMap from './components/ButtonMap'; 
-// import SearchBar from './components/SearchBar'; <--- Vamos substituir por uma barra de filtro visual direta
 
 // Firebase
 import { auth, db } from "../../services/firebaseConfig";
 import { collection, getDocs } from 'firebase/firestore';
 
+import { useNavigation } from '@react-navigation/native';
+import { NavigationProp } from '../../navigationTypes';
+
 const { width } = Dimensions.get('window');
 
-// Tipagem do Local (Baseado no seu BD)
+// Tipagem do Local
 type Local = {
   id: string;
   nome: string;
@@ -43,6 +44,8 @@ type Local = {
 };
 
 export default function HomeV2() {
+
+  const navigation = useNavigation<NavigationProp>();
   // Estados de Mapa e Locais
   const [region, setRegion] = useState<Region | null>(null);
   const [loading, setLoading] = useState(true);
@@ -55,7 +58,7 @@ export default function HomeV2() {
   const [categoriaSelecionada, setCategoriaSelecionada] = useState<string | null>(null);
   const [textoBusca, setTextoBusca] = useState('');
 
-  // 1. Permissão e Localização (MANTIDO DO SEU CÓDIGO ORIGINAL)
+  // 1. Permissão e Localização 
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -130,7 +133,7 @@ export default function HomeV2() {
     setLocaisFiltrados(resultado);
   }, [textoBusca, categoriaSelecionada, todosLocais]);
 
-  // Função para centralizar no usuário (MANTIDO)
+  // Função para centralizar no usuário
   const handleCenterUser = async () => {
     try {
       const location = await Location.getCurrentPositionAsync({});
@@ -145,7 +148,7 @@ export default function HomeV2() {
     }
   };
 
-  // Renderiza o Card do Carrossel (NOVO)
+  // Renderiza o Card do Carrossel 
   const renderCard = ({ item }: { item: Local }) => (
     <TouchableOpacity 
       style={styles.cardLocal}
@@ -157,6 +160,7 @@ export default function HomeV2() {
           latitudeDelta: 0.005,
           longitudeDelta: 0.005,
         });
+        navigation.navigate('PlaceDetail', { local: item });
       }}
     >
       <Image 
@@ -247,7 +251,7 @@ export default function HomeV2() {
         </View>
       </View>
 
-      {/* 4. Lista Inferior Flutuante (NOVA FEATURE) */}
+      {/* 4. Lista Inferior Flutuante */}
       <View style={styles.bottomListContainer}>
         {locaisFiltrados.length > 0 ? (
           <FlatList
